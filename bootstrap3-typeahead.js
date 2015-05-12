@@ -340,7 +340,7 @@
     },
 
     keydown: function (e) {
-      if(e.keyCode == 9)
+      if(e.keyCode == 9 && e.shiftKey == false)
         this.tabKeyPressed = true;
       this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,9,13,27]);
       if (!this.shown && e.keyCode == 40) {
