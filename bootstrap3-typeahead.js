@@ -60,12 +60,13 @@
     this.source = this.options.source;
     this.delay = this.options.delay;
     this.$menu = $(this.options.menu);
-    this.$appendTo = this.options.appendTo ? $(this.options.appendTo) : null;
+    this.$appendTo = this.options.appendTo ? $(this.options.appendTo) : null;   
     this.shown = false;
     this.listen();
     this.showHintOnFocus = typeof this.options.showHintOnFocus == 'boolean' ? this.options.showHintOnFocus : false;
     this.afterSelect = this.options.afterSelect;
     this.addItem = false;
+    this.tabKeyPressed = false;
   };
 
   Typeahead.prototype = {
@@ -132,7 +133,7 @@
       }
 
       var worker = $.proxy(function() {
-
+        
         if($.isFunction(this.source)) this.source(this.query, $.proxy(this.process, this));
         else if (this.source) {
           this.process(this.source);
@@ -155,13 +156,13 @@
       if (!items.length && !this.options.addItem) {
         return this.shown ? this.hide() : this;
       }
-
+      
       if (items.length > 0) {
         this.$element.data('active', items[0]);
       } else {
         this.$element.data('active', null);
       }
-
+      
       // Add item
       if (this.options.addItem){
         items.push(this.options.addItem);
@@ -234,7 +235,7 @@
         return i[0];
       });
 
-      if (this.autoSelect && !activeFound) {
+      if (this.autoSelect && !activeFound) {        
         items.first().addClass('active');
         this.$element.data('active', items.first().data('value'));
       }
@@ -284,7 +285,7 @@
         .on('mouseenter', 'li', $.proxy(this.mouseenter, this))
         .on('mouseleave', 'li', $.proxy(this.mouseleave, this));
     },
-
+    
     destroy : function () {
       this.$element.data('typeahead',null);
       this.$element.data('active',null);
@@ -300,7 +301,7 @@
 
       this.$menu.remove();
     },
-
+    
     eventSupported: function(eventName) {
       var isSupported = eventName in this.$element;
       if (!isSupported) {
@@ -334,9 +335,13 @@
           this.next();
           break;
       }
+
+      e.stopPropagation();
     },
 
     keydown: function (e) {
+      if(e.keyCode == 9)
+        this.tabKeyPressed = true;
       this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,9,13,27]);
       if (!this.shown && e.keyCode == 40) {
         this.lookup();
@@ -351,6 +356,7 @@
     },
 
     keyup: function (e) {
+      if(this.tabKeyPressed && e.keyCode != 9) this.tabKeyPressed = false;
       switch(e.keyCode) {
         case 40: // down arrow
         case 38: // up arrow
@@ -362,6 +368,10 @@
         case 9: // tab
         case 13: // enter
           if (!this.shown) return;
+          if(e.keyCode == 9) {
+            if(!this.tabKeyPressed) return;
+            this.tabKeyPressed = false;
+          }
           this.select();
           break;
 
@@ -373,6 +383,7 @@
           this.lookup();
       }
 
+      e.stopPropagation();
       e.preventDefault();
    },
 
@@ -391,6 +402,7 @@
     },
 
     click: function (e) {
+      e.stopPropagation();
       e.preventDefault();
       this.select();
       this.$element.focus();
