@@ -419,8 +419,8 @@
       e.stopPropagation();
       e.preventDefault();
       this.select();
-      if (e.target !== this.$element[0]) this.item_clicked = true;
-      this.$element.focus();
+      //if (e.target !== this.$element[0]) this.item_clicked = true;
+      //this.$element.focus();
     },
 
     mouseenter: function (e) {
