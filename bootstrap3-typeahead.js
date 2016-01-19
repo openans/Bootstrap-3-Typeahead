@@ -401,7 +401,10 @@
    focus: function (e) {
       if (!this.focused) {
         this.focused = true;
-        if (this.options.showHintOnFocus && !this.clicked) {
+        if (this.clicked){
+          return this.clicked = false
+        }  
+        if (this.options.showHintOnFocus) {
           this.lookup('');
         }
       }
