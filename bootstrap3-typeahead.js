@@ -282,6 +282,7 @@
 
     listen: function () {
       this.$element
+        .on('click',    $.proxy(this.click_element, this))
         .on('focus',    $.proxy(this.focus, this))
         .on('blur',     $.proxy(this.blur, this))
         .on('keypress', $.proxy(this.keypress, this))
@@ -415,12 +416,19 @@
       if (!this.mousedover && this.shown) this.hide();
     },
 
+    click_element: function (e) {
+      e.preventDefault();
+      if (this.options.showHintOnFocus) {
+        this.lookup('');
+      }
+    },
+
     click: function (e) {
       e.stopPropagation();
       e.preventDefault();
       this.select();
-      //if (e.target !== this.$element[0]) this.item_clicked = true;
-      //this.$element.focus();
+      if (e.target !== this.$element[0]) this.item_clicked = true;
+      this.$element.focus();
     },
 
     mouseenter: function (e) {
