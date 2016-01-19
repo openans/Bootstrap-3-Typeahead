@@ -78,6 +78,11 @@
       this.$element.data('active', val);
       if(this.autoSelect || val) {
         var newVal = this.updater(val);
+        // Updater can be set to any random functions via "options" parameter in constructor above.
+        // Add null check for cases when upadter returns void or undefined.
+        if (!newVal) {
+          newVal = "";	
+        }
         this.$element
           .val(this.displayText(newVal) || newVal)
           .change();
@@ -103,8 +108,15 @@
           this.options.scrollHeight.call() :
           this.options.scrollHeight;
 
-      (this.$appendTo ? this.$menu.appendTo(this.$appendTo) : this.$menu.insertAfter(this.$element))
-        .css({
+      var element;
+      if (this.shown) {
+      	element = this.$menu;
+      } else if (this.$appendTo) {
+      	element = this.$menu.appendTo(this.$appendTo);
+      } else {
+      	element = this.$menu.insertAfter(this.$element);
+      }
+      element.css({
           top: pos.top + pos.height + scrollHeight
         , left: pos.left
         })
@@ -133,8 +145,7 @@
       }
 
       var worker = $.proxy(function() {
-        
-        if($.isFunction(this.source)) this.source(this.query, $.proxy(this.process, this));
+        if($.isFunction(this.source)) this.process(this.source(this.query, $.proxy(this.process, this)));
         else if (this.source) {
           this.process(this.source);
         }
@@ -244,7 +255,7 @@
     },
 
     displayText: function(item) {
-      return item.name || item;
+      return typeof item !== 'undefined' && typeof item.name != 'undefined' && item.name || item;
     },
 
     next: function (event) {
@@ -451,7 +462,7 @@
     source: []
   , items: 8
   , menu: '<ul class="typeahead dropdown-menu" role="listbox"></ul>'
-  , item: '<li><a href="#" role="option"></a></li>'
+  , item: '<li><a class="dropdown-item" href="#" role="option"></a></li>'
   , minLength: 1
   , scrollHeight: 0
   , autoSelect: true
