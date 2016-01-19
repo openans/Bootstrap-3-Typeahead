@@ -419,7 +419,7 @@
       e.stopPropagation();
       e.preventDefault();
       this.select();
-      this.clicked = true;
+      if (e.target !== $element[0]) this.clicked = true;
       this.$element.focus();
     },
 
