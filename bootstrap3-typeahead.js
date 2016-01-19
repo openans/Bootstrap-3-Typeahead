@@ -401,7 +401,7 @@
    focus: function (e) {
       if (!this.focused) {
         this.focused = true;
-        if (this.options.showHintOnFocus) {
+        if (this.options.showHintOnFocus && !this.clicked) {
           this.lookup('');
         }
       }
@@ -416,6 +416,7 @@
       e.stopPropagation();
       e.preventDefault();
       this.select();
+      this.clicked = true;
       this.$element.focus();
     },
 
