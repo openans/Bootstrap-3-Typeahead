@@ -81,11 +81,11 @@
         // Updater can be set to any random functions via "options" parameter in constructor above.
         // Add null check for cases when upadter returns void or undefined.
         if (!newVal) {
-          newVal = "";	
+          newVal = '';
         }
         this.$element
           .val(this.displayText(newVal) || newVal)
-          .change();
+          .trigger('input');
         this.afterSelect(newVal);
       }
       return this.hide();
